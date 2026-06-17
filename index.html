@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Proyecto Verde Marga Marga - Plataforma digital inteligente para el reciclaje con eco-puntos">
+  <title>Verde Marga Marga - Reciclaje Inteligente</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'eco-green': '#00C896',
+            'eco-blue': '#00A8E8',
+            'eco-gold': '#FFD700',
+            'eco-dark': '#0F172A',
+            'eco-gray': '#1E293B',
+            'eco-light': '#F8FAFC',
+          },
+          fontFamily: {
+            'heading': ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+            'body': ['Inter', 'system-ui', 'sans-serif'],
+            'mono': ['JetBrains Mono', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    * { -webkit-tap-highlight-color: transparent; }
+    html { font-family: 'Inter', system-ui, sans-serif; scroll-behavior: smooth; }
+    body { @apply bg-eco-light text-eco-gray antialiased; font-family: 'Inter', system-ui, sans-serif; }
+    h1, h2, h3, h4, h5, h6 { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .btn-primary { @apply px-6 py-3 bg-gradient-to-r from-eco-green to-eco-blue text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200; }
+    .btn-secondary { @apply px-6 py-3 border-2 border-eco-green text-eco-green font-semibold rounded-xl hover:bg-eco-green hover:text-white transition-all duration-200; }
+    .card { @apply bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md hover:border-eco-green/20 transition-all duration-300; }
+    .stat-card { @apply bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col gap-3 hover:shadow-md transition-shadow duration-300; }
+    .nav-item { @apply flex flex-col items-center gap-1 p-3 text-gray-500 hover:text-eco-green transition-colors duration-200; }
+    .input-field { @apply w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-eco-green/50 focus:border-eco-green placeholder:text-gray-400 transition-all duration-200; }
+    .badge { @apply inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-eco-green/10 text-eco-green; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+
+    // Mock Data
+    const mockUser = {
+      name: 'María González',
+      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face',
+      level: 12, xp: 3450, xpToNextLevel: 4000, pointsBalance: 2840,
+      totalRecycled: 156.5, co2Saved: 423, treesEquivalent: 18,
+      streak: 14, achievements: 24, rank: 3, district: 'Marga Marga'
+    };
+
+    const mockBenefits = [
+      { id: 1, title: 'Café gratis tamaño grande', company: 'Café Marga', pointsCost: 150, category: 'Alimentación', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=300&h=200&fit=crop', available: true },
+      { id: 2, title: '30% descuento en sushi', company: 'Sushi House', pointsCost: 300, category: 'Alimentación', image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=300&h=200&fit=crop', available: true },
+      { id: 3, title: 'Boleto cine 2D', company: 'Cine Marga', pointsCost: 500, category: 'Entretención', image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=300&h=200&fit=crop', available: true },
+      { id: 4, title: 'Paseo en barco', company: 'Tour Marga', pointsCost: 800, category: 'Experiencias', image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=300&h=200&fit=crop', available: true },
+    ];
+
+    const mockRecyclingPoints = [
+      { id: 1, name: 'Punto Verde Reñaca', type: 'general', status: 'available', fillLevel: 45 },
+      { id: 2, name: 'EcoPunto Centro', type: 'electronic', status: 'available', fillLevel: 72 },
+      { id: 3, name: 'Contenedor Juana Ross', type: 'glass', status: 'full', fillLevel: 95 },
+      { id: 4, name: 'Punto Verde Jardín del Edén', type: 'general', status: 'available', fillLevel: 30 },
+    ];
+
+    const mockAchievements = [
+      { id: 1, title: 'Primer Paso Verde', description: 'Tu primer reciclaje registrado', icon: '🌱', unlocked: true },
+      { id: 2, title: 'Reciclador Serial', description: '10 reciclar en el mes', icon: '♻️', unlocked: true },
+      { id: 3, title: 'Guerrero del Planeta', description: 'Recicla 100kg de residuos', icon: '🌍', unlocked: true },
+      { id: 4, title: 'Maestro del Compost', description: 'Aprende sobre compostaje', icon: '🍃', unlocked: false, progress: 60 },
+    ];
+
+    // Icons
+    const Icon = ({ name }) => {
+      const icons = {
+        Home: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>,
+        Recycle: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5"/><path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12"/><path d="m14 16-3 3 3 3"/><path d="M8.293 13.596 7.196 9.5 3.1 10.598"/><path d="m9.344 5.81 3 3 3-3"/><path d="M12 3v6"/></svg>,
+        Gift: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20,12 20,22 4,22 4,12"/><rect width="20" height="5" x="2" y="7"/><line x1="12" x2="12" y1="22" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>,
+        Map: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3,6 9,3 15,6 21,3 21,18 15,21 9,18 3,21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></svg>,
+        User: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+        Leaf: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75"/></svg>,
+        TrendingUp: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/><polyline points="16,7 22,7 22,13"/></svg>,
+        Trophy: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>,
+        Award: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>,
+        Lightbulb: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>,
+        MapPin: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>,
+        QrCode: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>,
+        Search: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg>,
+        ChevronRight: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>,
+        Check: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20,6 9,17 4,12"/></svg>,
+        X: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>,
+        Building2: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>,
+        Globe: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
+        Shield: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+        Download: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>,
+        Settings: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>,
+        LogOut: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>,
+        BarChart3: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>,
+        Bell: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>,
+      };
+      return icons[name] || <span>{name}</span>;
+    };
+
+    // Bottom Navigation
+    const BottomNav = ({ currentPage, setCurrentPage }) => {
+      const navItems = [
+        { id: 'home', label: 'Inicio', icon: 'Home' },
+        { id: 'recycling', label: 'Reciclar', icon: 'Recycle' },
+        { id: 'marketplace', label: 'Premios', icon: 'Gift' },
+        { id: 'map', label: 'Mapa', icon: 'Map' },
+        { id: 'profile', label: 'Perfil', icon: 'User' },
+      ];
+      return (
+        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100">
+          <div className="flex items-center justify-around py-2 px-4 max-w-lg mx-auto">
+            {navItems.map(({ id, label, icon }) => (
+              <button key={id} onClick={() => setCurrentPage(id)} className={`nav-item ${currentPage === id ? 'text-eco-green' : ''}`}>
+                <Icon name={icon} />
+                <span className="text-[10px] font-medium">{label}</span>
+              </button>
+            ))}
+          </div>
+        </nav>
+      );
+    };
+
+    // Home Page
+    const HomePage = () => (
+      <div className="min-h-screen pb-24">
+        <header className="px-4 pt-6 pb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">Buenos días 👋</p>
+              <h1 className="font-heading font-bold text-xl">{mockUser.name}</h1>
+            </div>
+            <div className="flex items-center gap-3">
+              <button className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center"><Icon name="Bell" /></button>
+              <img src={mockUser.avatar} alt="Avatar" className="w-10 h-10 rounded-xl object-cover shadow-sm" />
+            </div>
+          </div>
+        </header>
+        <div className="px-4 space-y-6">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-eco-green via-eco-blue to-eco-green p-6 text-white shadow-2xl">
+            <div className="absolute inset-0 opacity-10"><div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white animate-pulse" /></div>
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-6">
+                <span className="text-white/80 text-sm">Tus Eco-Points</span>
+                <div className="flex items-center gap-1 bg-white/20 px-3 py-1 rounded-full"><span className="text-xs">Nivel</span><span className="font-bold">{mockUser.level}</span></div>
+              </div>
+              <div className="text-4xl font-bold font-mono mb-4">{mockUser.pointsBalance.toLocaleString()} <span className="text-2xl ml-1">EP</span></div>
+              <div className="h-2 bg-white/20 rounded-full overflow-hidden"><div className="h-full bg-eco-gold rounded-full" style={{width: '86%'}} /></div>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 text-center">
+              <div className="text-lg mb-1">🔥</div><div className="font-bold text-sm">{mockUser.streak} días</div><div className="text-xs text-gray-500">Racha actual</div>
+            </div>
+            <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 text-center">
+              <div className="text-lg mb-1">🏆</div><div className="font-bold text-sm">{mockUser.achievements}</div><div className="text-xs text-gray-500">Logros</div>
+            </div>
+            <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 text-center">
+              <div className="text-lg mb-1">📊</div><div className="font-bold text-sm">#{mockUser.rank}</div><div className="text-xs text-gray-500">Ranking</div>
+            </div>
+          </div>
+          <section>
+            <h2 className="font-heading font-semibold text-gray-800 mb-3">Tu Impacto Ambiental</h2>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="stat-card"><div className="text-2xl mb-1 text-eco-green">♻️</div><div className="text-2xl font-bold font-mono">156.5kg</div><div className="text-xs text-gray-500">Kg Reciclados</div><div className="flex items-center gap-1 text-xs text-eco-green"><Icon name="TrendingUp" /><span>+12%</span></div></div>
+              <div className="stat-card"><div className="text-2xl mb-1 text-eco-blue">🌿</div><div className="text-2xl font-bold font-mono">423kg</div><div className="text-xs text-gray-500">CO₂ Ahorrado</div><div className="flex items-center gap-1 text-xs text-eco-green"><Icon name="TrendingUp" /><span>+8%</span></div></div>
+              <div className="stat-card"><div className="text-2xl mb-1 text-green-600">🌳</div><div className="text-2xl font-bold font-mono">18</div><div className="text-xs text-gray-500">Árboles</div><div className="flex items-center gap-1 text-xs text-eco-green"><Icon name="TrendingUp" /><span>+3</span></div></div>
+            </div>
+          </section>
+          <section>
+            <h3 className="font-heading font-semibold text-gray-800 flex items-center gap-2"><span className="text-eco-gold"><Icon name="Lightbulb" /></span>Recomendaciones IA</h3>
+            <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar mt-3">
+              <div className="flex-shrink-0 w-64 p-4 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all cursor-pointer">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-eco-green/10 flex items-center justify-center text-eco-green"><Icon name="MapPin" /></div>
+                  <div className="flex-1"><h4 className="font-medium text-sm text-gray-800 mb-1">Contenedor cercano disponible</h4><p className="text-xs text-gray-500 mb-2">Hay un contenedor de vidrio a 200m</p><button className="text-xs text-eco-green font-medium flex items-center gap-1">Ver en mapa <Icon name="ChevronRight" /></button></div>
+                </div>
+              </div>
+              <div className="flex-shrink-0 w-64 p-4 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all cursor-pointer">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-eco-gold/10 flex items-center justify-center text-eco-gold"><Icon name="Lightbulb" /></div>
+                  <div className="flex-1"><h4 className="font-medium text-sm text-gray-800 mb-1">Optimiza tu ruta</h4><p className="text-xs text-gray-500 mb-2">Recicla papel y vidrio hoy</p><button className="text-xs text-eco-green font-medium flex items-center gap-1">Ver ruta <Icon name="ChevronRight" /></button></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    );
+
+    // Recycling Page
+    const RecyclingPage = ({ onScan }) => {
+      const types = [
+        { id: 'glass', label: 'Vidrio', icon: '🍷', points: '15 EP/kg' },
+        { id: 'paper', label: 'Papel', icon: '📄', points: '12 EP/kg' },
+        { id: 'plastic', label: 'Plástico', icon: '🥤', points: '10 EP/kg' },
+        { id: 'metal', label: 'Metal', icon: '🥫', points: '18 EP/kg' },
+        { id: 'electronic', label: 'Electrónico', icon: '📱', points: '25 EP/kg' },
+        { id: 'organic', label: 'Orgánico', icon: '🍃', points: '8 EP/kg' },
+      ];
+      return (
+        <div className="min-h-screen pb-24">
+          <header className="px-4 pt-6 pb-4">
+            <div className="flex items-center justify-between">
+              <div><h1 className="font-heading font-bold text-2xl">Reciclar</h1><p className="text-sm text-gray-500">Escanea y gana puntos</p></div>
+              <div className="flex items-center gap-2 bg-eco-green/10 px-3 py-1.5 rounded-full"><span className="text-sm font-semibold text-eco-green">+25% bonus</span></div>
+            </div>
+          </header>
+          <div className="px-4 space-y-6">
+            <button onClick={onScan} className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-eco-green to-eco-blue p-6 text-white shadow-xl active:scale-[0.98] transition-transform">
+              <div className="absolute inset-0 opacity-20"><div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white -translate-y-1/2 translate-x-1/2" /></div>
+              <div className="relative flex items-center gap-4">
+                <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm"><Icon name="QrCode" /></div>
+                <div className="text-left"><h3 className="font-heading font-bold text-lg">Escanear QR</h3><p className="text-sm text-white/80">Detecta automáticamente tu reciclaje</p></div>
+              </div>
+            </button>
+            <section>
+              <h2 className="font-heading font-semibold text-gray-800 mb-3">Tipos de Reciclaje</h2>
+              <div className="grid grid-cols-2 gap-3">
+                {types.map((type) => (
+                  <div key={type.id} className="bg-white rounded-2xl p-4 border border-gray-100 hover:shadow-md transition-all">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-eco-green to-eco-blue flex items-center justify-center mb-3 text-2xl">{type.icon}</div>
+                    <h3 className="font-semibold text-gray-800 mb-1">{type.label}</h3>
+                    <div className="flex items-center justify-between"><span className="text-sm font-bold text-eco-green">{type.points}</span></div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        </div>
+      );
+    };
+
+    // Marketplace Page
+    const MarketplacePage = ({ onRedeem }) => (
+      <div className="min-h-screen pb-24">
+        <header className="px-4 pt-6 pb-4">
+          <div className="flex items-center justify-between mb-4">
+            <div><h1 className="font-heading font-bold text-2xl">Marketplace</h1><p className="text-sm text-gray-500">Canjear Eco-Points</p></div>
+            <div className="flex items-center gap-2 bg-eco-green text-white px-4 py-2 rounded-xl"><span className="font-bold">{mockUser.pointsBalance}</span><span className="text-sm">EP</span></div>
+          </div>
+        </header>
+        <div className="px-4 space-y-6">
+          <section>
+            <h2 className="font-heading font-semibold text-gray-800 flex items-center gap-2 mb-3"><span className="text-eco-gold">⭐</span>Destacados</h2>
+            <div className="grid grid-cols-2 gap-3">
+              {mockBenefits.map((benefit) => (
+                <div key={benefit.id} className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all">
+                  <div className="relative h-36"><img src={benefit.image} alt={benefit.title} className="w-full h-full object-cover" /><div className="absolute top-3 left-3"><span className="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium">{benefit.category}</span></div></div>
+                  <div className="p-4"><h3 className="font-semibold text-gray-800 mb-1 text-sm line-clamp-1">{benefit.title}</h3><p className="text-sm text-gray-500 mb-3">{benefit.company}</p>
+                    <div className="flex items-center justify-between"><div className="flex items-center gap-2"><span className="text-lg font-bold text-eco-green">{benefit.pointsCost}</span><span className="text-sm text-gray-400">EP</span></div><button onClick={() => onRedeem(benefit)} className="px-4 py-2 bg-eco-green text-white text-sm font-medium rounded-lg hover:bg-eco-green/90 transition-colors">Canjear</button></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      </div>
+    );
+
+    // Map Page
+    const MapPage = () => {
+      const statusConfig = { available: { color: '#10B981', label: 'Disponible' }, near_full: { color: '#F59E0B', label: 'Casi lleno' }, full: { color: '#EF4444', label: 'Lleno' } };
+      return (
+        <div className="min-h-screen pb-24 relative">
+          <div className="h-[60vh] relative bg-gradient-to-br from-blue-50 via-green-50 to-blue-100">
+            <div className="absolute inset-0 flex items-center justify-center"><div className="text-center opacity-30"><div className="text-6xl mb-2"><Icon name="MapPin" /></div><p className="text-sm text-gray-500">Mapa de Viña del Mar</p></div></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"><div className="relative"><div className="absolute -inset-4 bg-eco-blue/20 rounded-full animate-pulse" /><div className="w-4 h-4 bg-eco-blue rounded-full border-4 border-white shadow-lg" /></div></div>
+            {mockRecyclingPoints.map((point, i) => {
+              const positions = [{ left: '20%', top: '30%' }, { left: '70%', top: '25%' }, { left: '25%', top: '65%' }, { left: '65%', top: '70%' }];
+              const status = statusConfig[point.status];
+              return <div key={point.id} className="absolute w-10 h-10 rounded-xl flex items-center justify-center shadow-lg border-2 border-white cursor-pointer hover:scale-110 transition-transform" style={{ ...positions[i], backgroundColor: status.color }}><span className="text-white text-lg">♻️</span></div>;
+            })}
+          </div>
+          <div className="bg-white rounded-t-3xl -mt-6 relative z-10">
+            <div className="p-4">
+              <div className="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
+              <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+                {['General', 'Vidrio', 'Papel', 'Electrónico', 'Orgánico'].map((filter, i) => <button key={filter} className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap ${i === 0 ? 'bg-eco-green text-white' : 'bg-white text-gray-600 border border-gray-200'}`}>{filter}</button>)}
+              </div>
+              <div className="grid grid-cols-3 gap-3 my-4">
+                <div className="bg-eco-green/10 rounded-xl p-3 text-center"><p className="text-2xl font-bold text-eco-green">{mockRecyclingPoints.length}</p><p className="text-xs text-gray-500">Puntos totales</p></div>
+                <div className="bg-eco-blue/10 rounded-xl p-3 text-center"><p className="text-2xl font-bold text-eco-blue">{mockRecyclingPoints.filter(p => p.status === 'available').length}</p><p className="text-xs text-gray-500">Disponibles</p></div>
+                <div className="bg-eco-gold/10 rounded-xl p-3 text-center"><p className="text-2xl font-bold text-eco-gold">4</p><p className="text-xs text-gray-500">IoT activos</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // Profile Page
+    const ProfilePage = () => (
+      <div className="min-h-screen pb-24 -mt-6">
+        <div className="relative bg-gradient-to-br from-eco-green via-eco-blue to-eco-green p-6 text-white">
+          <div className="absolute inset-0 overflow-hidden opacity-10"><div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white" /></div>
+          <div className="relative flex items-center gap-4 mb-6">
+            <div className="relative"><img src={mockUser.avatar} alt={mockUser.name} className="w-20 h-20 rounded-2xl object-cover border-4 border-white/30 shadow-lg" /><div className="absolute -bottom-2 -right-2 w-8 h-8 bg-eco-gold rounded-full flex items-center justify-center text-lg">🌿</div></div>
+            <div><h1 className="font-heading font-bold text-2xl">{mockUser.name}</h1><div className="flex items-center gap-2 mt-2"><span className="px-2 py-0.5 bg-white/20 rounded-full text-xs">Arbusto</span><span className="px-2 py-0.5 bg-eco-gold/30 rounded-full text-xs text-eco-gold">Nivel {mockUser.level}</span></div></div>
+          </div>
+          <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
+            <div className="flex justify-between text-sm mb-2"><span>Progreso al nivel {mockUser.level + 1}</span><span>{mockUser.xp} / {mockUser.xpToNextLevel} XP</span></div>
+            <div className="h-3 bg-white/20 rounded-full overflow-hidden"><div className="h-full bg-eco-gold rounded-full" style={{ width: '86%' }} /></div>
+          </div>
+        </div>
+        <div className="mt-6 px-4 space-y-6">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-white rounded-xl p-4 border border-gray-100 text-center"><div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center mx-auto mb-2 text-2xl">🔥</div><div className="text-2xl font-bold font-mono">{mockUser.streak} días</div><div className="text-sm text-gray-500">Racha actual</div></div>
+            <div className="bg-white rounded-xl p-4 border border-gray-100 text-center"><div className="w-10 h-10 rounded-xl bg-eco-gold/10 flex items-center justify-center mx-auto mb-2"><Icon name="Trophy" /></div><div className="text-2xl font-bold font-mono">{mockUser.achievements}</div><div className="text-sm text-gray-500">Logros obtenidos</div></div>
+          </div>
+          <div className="space-y-3">
+            <h2 className="font-heading font-semibold text-gray-800 flex items-center gap-2"><span className="text-eco-gold"><Icon name="Award" /></span>Logros</h2>
+            <div className="grid grid-cols-2 gap-3">
+              {mockAchievements.map((achievement) => (
+                <div key={achievement.id} className={`relative bg-white rounded-xl p-4 border ${achievement.unlocked ? 'border-eco-gold/30 shadow-md' : 'border-gray-100 opacity-60'}`}>
+                  {achievement.unlocked && <div className="absolute top-2 right-2 w-2 h-2 bg-eco-gold rounded-full" />}
+                  <div className="text-3xl mb-2">{achievement.icon}</div>
+                  <h3 className={`font-medium text-sm ${achievement.unlocked ? 'text-gray-800' : 'text-gray-500'}`}>{achievement.title}</h3>
+                  <p className="text-xs text-gray-500">{achievement.description}</p>
+                  {achievement.unlocked && <div className="flex items-center gap-1 text-xs text-eco-gold mt-2"><Icon name="Check" /><span>Desbloqueado</span></div>}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-3">
+            <h2 className="font-heading font-semibold text-gray-800">Configuración</h2>
+            <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-100">
+              <button className="flex items-center gap-3 w-full p-4 text-left"><div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center"><Icon name="User" /></div><span className="flex-1 font-medium text-gray-800">Editar perfil</span><Icon name="ChevronRight" /></button>
+              <button className="flex items-center gap-3 w-full p-4 text-left"><div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center"><Icon name="Settings" /></div><span className="flex-1 font-medium text-gray-800">Configuración</span><Icon name="ChevronRight" /></button>
+            </div>
+            <button className="flex items-center gap-3 w-full p-4 text-left text-red-500"><div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center"><Icon name="LogOut" /></div><span className="font-medium">Cerrar sesión</span></button>
+          </div>
+        </div>
+      </div>
+    );
+
+    // Enterprise Page
+    const EnterprisePage = () => (
+      <div className="min-h-screen pb-24 bg-gray-50">
+        <header className="bg-gradient-to-r from-eco-blue to-eco-green p-6 text-white">
+          <div className="flex items-center gap-4"><div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center"><Icon name="Building2" /></div><div><h1 className="font-heading font-bold text-2xl">EcoRec Chile</h1><p className="text-white/80 text-sm">Panel Empresarial</p></div></div>
+        </header>
+        <div className="px-4 mt-4 space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-white rounded-2xl p-5 border border-gray-100"><div className="w-12 h-12 rounded-xl bg-eco-green/10 flex items-center justify-center mb-3"><Icon name="Recycle" /></div><div className="text-3xl font-bold font-mono">45t</div><div className="text-sm text-gray-500">Residuos Comprados</div><div className="flex items-center gap-1 text-sm text-eco-green mt-2"><Icon name="TrendingUp" /><span>+8.5%</span></div></div>
+            <div className="bg-white rounded-2xl p-5 border border-gray-100"><div className="w-12 h-12 rounded-xl bg-eco-blue/10 flex items-center justify-center mb-3"><Icon name="Gift" /></div><div className="text-3xl font-bold font-mono">12,500</div><div className="text-sm text-gray-500">Eco-Points Financiados</div><div className="flex items-center gap-1 text-sm text-eco-green mt-2"><Icon name="TrendingUp" /><span>+12.3%</span></div></div>
+          </div>
+          <div className="bg-white rounded-2xl p-5 border border-gray-100"><h3 className="font-heading font-semibold text-gray-800 mb-4">Tendencia de Residuos</h3><div className="h-48 bg-gradient-to-br from-eco-green/5 to-eco-blue/5 rounded-xl flex items-center justify-center"><div className="text-center text-gray-400"><Icon name="BarChart3" /><p className="mt-2 text-sm">Gráfico de Tendencias</p></div></div></div>
+          <div className="bg-white rounded-2xl p-5 border border-gray-100"><h3 className="font-heading font-semibold text-gray-800 mb-4">Beneficios Activos</h3><div className="space-y-3">{['Café gratis', '30% descuento sushi', 'Paseo en barco'].map((benefit, i) => <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl"><div><p className="font-medium text-sm">{benefit}</p><p className="text-xs text-gray-500">{30 + i * 15} canjes</p></div><span className="font-bold text-eco-green">{150 + i * 150} EP</span></div>)}</div></div>
+        </div>
+      </div>
+    );
+
+    // Municipal Page
+    const MunicipalPage = () => (
+      <div className="min-h-screen pb-24 bg-gray-50">
+        <header className="bg-gradient-to-br from-slate-800 to-slate-900 p-6 text-white">
+          <div className="flex items-center gap-4"><div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center"><Icon name="Globe" /></div><div><h1 className="font-heading font-bold text-2xl">Dashboard Comunal</h1><p className="text-white/80 text-sm">Comuna Marga Marga - Viña del Mar</p></div></div>
+        </header>
+        <div className="px-4 -mt-4"><div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-lg"><div className="grid grid-cols-2 gap-6"><div className="text-center"><p className="text-4xl font-bold text-eco-green font-mono">45,678</p><p className="text-sm text-gray-500">kg reciclados en 2026</p></div><div className="text-center border-l border-gray-100"><p className="text-4xl font-bold text-eco-blue font-mono">1,247</p><p className="text-sm text-gray-500">usuarios activos</p></div></div></div></div>
+        <div className="px-4 mt-4 grid grid-cols-2 gap-3">
+          <div className="bg-white rounded-2xl p-5 border border-gray-100"><div className="w-12 h-12 rounded-xl bg-eco-green/10 flex items-center justify-center mb-3"><Icon name="Leaf" /></div><div className="text-3xl font-bold font-mono text-eco-green">123t</div><div className="text-sm text-gray-500">CO₂ Ahorrado</div></div>
+          <div className="bg-white rounded-2xl p-5 border border-gray-100"><div className="w-12 h-12 rounded-xl bg-eco-blue/10 flex items-center justify-center mb-3"><Icon name="Globe" /></div><div className="text-3xl font-bold font-mono text-eco-blue">890k</div><div className="text-sm text-gray-500">Puntos Distribuidos</div></div>
+        </div>
+        <div className="px-4 mt-4 space-y-4">
+          <div className="bg-gradient-to-br from-eco-green to-eco-blue rounded-2xl p-6 text-white"><h3 className="font-heading font-bold text-lg mb-4 flex items-center gap-2"><Icon name="Shield" />Impacto Ambiental</h3><div className="space-y-4"><div className="bg-white/20 rounded-xl p-4"><p className="text-2xl font-bold font-mono">123,456 kg</p><p className="text-sm text-white/80">CO₂ evitado (= 56 árboles plantados)</p></div><div className="bg-white/20 rounded-xl p-4"><p className="text-2xl font-bold font-mono">2.3M litros</p><p className="text-sm text-white/80">Agua ahorrada (= 92 piscinas)</p></div></div></div>
+          <div className="bg-white rounded-2xl p-5 border border-gray-100"><h3 className="font-heading font-semibold text-gray-800 mb-4">Reportes</h3><button className="w-full flex items-center justify-center gap-2 bg-eco-green text-white px-4 py-3 rounded-xl font-medium"><Icon name="Download" />Descargar Reporte PDF</button></div>
+        </div>
+      </div>
+    );
+
+    // Modal
+    const Modal = ({ isOpen, onClose, children }) => { if (!isOpen) return null; return <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={onClose}><div className="bg-white rounded-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>{children}</div></div>; };
+
+    // Scan Modal
+    const ScanModal = ({ isOpen, onClose, onScanComplete }) => {
+      const [step, setStep] = useState('idle');
+      const handleScan = () => {
+        setStep('scanning');
+        setTimeout(() => { setStep('validating'); setTimeout(() => { setStep('success'); setTimeout(() => { onScanComplete(); onClose(); setStep('idle'); }, 1500); }, 1500); }, 1500);
+      };
+      return (
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <div className="relative h-64 bg-gradient-to-b from-eco-green/20 to-eco-blue/20 flex items-center justify-center">
+            <div className="relative w-48 h-48">
+              <div className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-eco-green rounded-tl-xl" />
+              <div className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-eco-green rounded-tr-xl" />
+              <div className="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-eco-green rounded-bl-xl" />
+              <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-eco-green rounded-br-xl" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                {step === 'scanning' && <div className="text-5xl animate-pulse"><Icon name="QrCode" /></div>}
+                {step === 'validating' && <div className="text-5xl animate-spin">⏳</div>}
+                {step === 'success' && <div className="text-5xl text-eco-green"><Icon name="Check" /></div>}
+              </div>
+            </div>
+            <button onClick={onClose} className="absolute top-4 right-4 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center"><Icon name="X" /></button>
+          </div>
+          <div className="p-6 text-center">
+            {step === 'idle' && <><h3 className="font-heading font-bold text-xl mb-2">Escanear QR</h3><p className="text-gray-500 text-sm mb-4">Aproxima el código QR del contenedor</p><button onClick={handleScan} className="w-full btn-primary">Iniciar Escaneo</button></>}
+            {step === 'scanning' && <h3 className="font-heading font-bold text-xl">Escaneando...</h3>}
+            {step === 'validating' && <h3 className="font-heading font-bold text-xl">Validando...</h3>}
+            {step === 'success' && <><h3 className="font-heading font-bold text-xl mb-2">¡Reciclaje Registrado!</h3><div className="bg-eco-green/10 rounded-xl p-4 mb-4"><p className="text-sm text-gray-600">Peso registrado</p><p className="font-bold text-xl">1.2 kg</p><p className="text-sm text-eco-green mt-2">+18 EP</p></div></>}
+          </div>
+        </Modal>
+      );
+    };
+
+    // Success Modal
+    const SuccessModal = ({ isOpen, onClose, points }) => (
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <div className="p-8 text-center">
+          <div className="w-20 h-20 mx-auto mb-4 bg-eco-green rounded-full flex items-center justify-center text-4xl animate-bounce">🎉</div>
+          <h3 className="font-heading font-bold text-xl mb-2">¡Canje Exitoso!</h3>
+          <p className="text-gray-500 mb-4">Has canjeado <span className="font-bold text-eco-green">{points} EP</span></p>
+          <button onClick={onClose} className="w-full btn-primary">Continuar</button>
+        </div>
+      </Modal>
+    );
+
+    // Main App
+    const App = () => {
+      const [currentPage, setCurrentPage] = useState('home');
+      const [showScan, setShowScan] = useState(false);
+      const [showSuccess, setShowSuccess] = useState(false);
+      const [lastRedeemed, setLastRedeemed] = useState(null);
+      const handleRedeem = (benefit) => { setLastRedeemed(benefit); setShowSuccess(true); };
+      const handleScanComplete = () => {};
+      const renderPage = () => { switch (currentPage) { case 'home': return <HomePage />; case 'recycling': return <RecyclingPage onScan={() => setShowScan(true)} />; case 'marketplace': return <MarketplacePage onRedeem={handleRedeem} />; case 'map': return <MapPage />; case 'profile': return <ProfilePage />; case 'enterprise': return <EnterprisePage />; case 'municipal': return <MunicipalPage />; default: return <HomePage />; } };
+      const showBottomNav = !['enterprise', 'municipal'].includes(currentPage);
+      return (
+        <div className="min-h-screen bg-eco-light">
+          {renderPage()}
+          {showBottomNav && <BottomNav currentPage={currentPage} setCurrentPage={setCurrentPage} />}
+          {!showBottomNav && <div className="fixed top-4 left-4 z-50 flex gap-2">
+            <button onClick={() => setCurrentPage('enterprise')} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${currentPage === 'enterprise' ? 'bg-eco-blue text-white shadow-md' : 'bg-white text-gray-600'}`}>Empresa</button>
+            <button onClick={() => setCurrentPage('municipal')} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${currentPage === 'municipal' ? 'bg-eco-blue text-white shadow-md' : 'bg-white text-gray-600'}`}>Municipal</button>
+            <button onClick={() => setCurrentPage('home')} className="px-4 py-2 bg-white text-gray-600 rounded-xl text-sm font-medium">Usuario</button>
+          </div>}
+          <ScanModal isOpen={showScan} onClose={() => setShowScan(false)} onScanComplete={handleScanComplete} />
+          <SuccessModal isOpen={showSuccess} onClose={() => setShowSuccess(false)} points={lastRedeemed?.pointsCost} />
+        </div>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+
+<script>
+/**
+ * Iframe 元素高亮注入脚本
+ * 需要在目标网站中引入此脚本来支持跨域 iframe 高亮功能
+ *
+ * 使用方法：
+ * 1. 将此脚本添加到目标网站的 HTML 中
+ * 2. 或通过浏览器扩展、用户脚本等方式注入
+ */
+
+(function () {
+  "use strict";
+
+  // 检查是否在 iframe 中
+  if (window.self === window.top) {
+    return; // 不在 iframe 中，不执行
+  }
+
+  // 检查是否已经初始化过
+  if (window.__iframeHighlightInitialized) {
+    return;
+  }
+  window.__iframeHighlightInitialized = true;
+  console.log("Iframe 高亮脚本已加载");
+
+  // 创建高亮覆盖层
+  var overlay = document.createElement("div");
+  overlay.id = "iframe-highlight-overlay";
+  overlay.style.cssText = "\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100vw;\n    height: 100vh;\n    pointer-events: none;\n    z-index: 999999;\n    overflow: hidden;\n  ";
+
+  // 创建悬停高亮框（虚线边框）
+  var highlightBox = document.createElement("div");
+  highlightBox.id = "iframe-highlight-box";
+  highlightBox.style.cssText = "\n    position: absolute;\n    border: 2px dashed #007AFF;\n    background: rgba(0, 122, 255, 0.08);\n    pointer-events: none;\n    display: none;\n    transition: all 0.1s ease;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);\n    border-radius: 2px;\n  ";
+
+  // 创建选中节点的常驻高亮框（实线边框）
+  var selectedBox = document.createElement("div");
+  selectedBox.id = "iframe-selected-box";
+  selectedBox.style.cssText = "\n    position: absolute;\n    border: 2px solid #007AFF;\n    pointer-events: none;\n    display: none;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 107, 53, 0.4);\n    border-radius: 2px;\n    z-index: 1000000;\n  ";
+
+  // 创建悬停标签显示
+  var tagLabel = document.createElement("div");
+  tagLabel.id = "iframe-tag-label";
+  tagLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 2px 6px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 2px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000001;\n    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n    font-weight: 500;\n  ";
+
+  // 创建选中节点标签
+  var selectedLabel = document.createElement("div");
+  selectedLabel.id = "iframe-selected-label";
+  selectedLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 3px 8px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 3px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000002;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);\n    font-weight: 600;\n  ";
+  overlay.appendChild(highlightBox);
+  overlay.appendChild(selectedBox);
+  overlay.appendChild(tagLabel);
+  overlay.appendChild(selectedLabel);
+  document.body.appendChild(overlay);
+
+  // 存储当前选中的元素
+  var selectedElement = null;
+  var highlightEnabled = false;
+
+  // 更新选中元素的高亮显示
+  function updateSelectedHighlight(element) {
+    console.log("updateSelectedHighlight called with:", element);
+    if (!element) {
+      selectedBox.style.display = "none";
+      selectedLabel.style.display = "none";
+      selectedElement = null;
+      console.log("Cleared selected highlight");
+      return;
+    }
+    selectedElement = element;
+    var rect = element.getBoundingClientRect();
+    console.log("Selected element rect:", rect);
+
+    // 更新选中高亮框位置
+    selectedBox.style.display = "block";
+    selectedBox.style.left = "".concat(rect.left - 2, "px");
+    selectedBox.style.top = "".concat(rect.top - 2, "px");
+    selectedBox.style.width = "".concat(rect.width + 4, "px");
+    selectedBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新选中标签位置和内容
+    selectedLabel.style.display = "block";
+    selectedLabel.textContent = "\u2713 <".concat(element.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 28;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 5) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    var labelWidth = selectedLabel.offsetWidth || 100; // 预估宽度
+    if (labelLeft + labelWidth > window.innerWidth - 10) {
+      labelLeft = window.innerWidth - labelWidth - 10;
+    }
+    selectedLabel.style.left = "".concat(Math.max(5, labelLeft), "px");
+    selectedLabel.style.top = "".concat(labelTop, "px");
+    console.log("Selected highlight positioned at:", {
+      left: selectedBox.style.left,
+      top: selectedBox.style.top,
+      width: selectedBox.style.width,
+      height: selectedBox.style.height
+    });
+  }
+  function getElementSelector(element) {
+    if (!(element instanceof Element)) throw new Error('Argument must be a DOM element');
+    var segments = [];
+    var current = element;
+    while (current !== document.documentElement) {
+      var selector = '';
+      // 优先检查唯一ID
+      if (current.id && document.querySelectorAll("#".concat(current.id)).length === 1) {
+        segments.unshift("#".concat(current.id));
+        break; // ID唯一，无需继续向上
+      }
+
+      // 生成类名选择器（取第一个有效类名）
+      var classes = Array.from(current.classList).filter(function (c) {
+        return !c.startsWith('js-');
+      });
+      var className = classes.length > 0 ? ".".concat(classes[0]) : '';
+
+      // 生成位置索引（nth-child）
+      var tag = current.tagName.toLowerCase();
+      if (!className) {
+        var siblings = Array.from(current.parentNode.children);
+        var index = siblings.findIndex(function (el) {
+          return el === current;
+        }) + 1;
+        selector = "".concat(tag, ":nth-child(").concat(index, ")");
+      } else {
+        selector = className;
+      }
+      segments.unshift(selector);
+      current = current.parentElement;
+    }
+
+    // 处理根元素
+    if (current === document.documentElement) {
+      segments.unshift('html');
+    }
+    return segments.join(' > ');
+  }
+
+  // 获取元素文本内容
+  function getElementText(element) {
+    var _element$textContent;
+    if (element.tagName === "INPUT") {
+      return element.value || element.placeholder || "";
+    }
+    if (element.tagName === "TEXTAREA") {
+      return element.value || element.placeholder || "";
+    }
+    var text = ((_element$textContent = element.textContent) === null || _element$textContent === void 0 ? void 0 : _element$textContent.trim()) || "";
+    return text.length > 50 ? text.substring(0, 50) + "..." : text;
+  }
+
+  // 获取元素属性信息
+  function getElementAttributes(element) {
+    var attrs = {};
+    for (var i = 0; i < element.attributes.length; i++) {
+      var attr = element.attributes[i];
+      attrs[attr.name] = attr.value;
+    }
+    return attrs;
+  }
+
+  // 鼠标悬停事件处理
+  function handleMouseOver(e) {
+    if (!highlightEnabled) return;
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免高亮 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 如果是已选中的元素，不显示悬停高亮
+    if (target === selectedElement) {
+      highlightBox.style.display = "none";
+      tagLabel.style.display = "none";
+      return;
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+
+    // 更新悬停高亮框位置
+    highlightBox.style.display = "block";
+    highlightBox.style.left = "".concat(rect.left - 2, "px");
+    highlightBox.style.top = "".concat(rect.top - 2, "px");
+    highlightBox.style.width = "".concat(rect.width + 4, "px");
+    highlightBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新标签位置和内容
+    tagLabel.style.display = "block";
+    tagLabel.textContent = "<".concat(target.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 22;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 0) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    if (labelLeft + tagLabel.offsetWidth > window.innerWidth) {
+      labelLeft = window.innerWidth - tagLabel.offsetWidth - 5;
+    }
+    tagLabel.style.left = "".concat(Math.max(0, labelLeft), "px");
+    tagLabel.style.top = "".concat(labelTop, "px");
+
+    // 发送消息到父窗口
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 鼠标离开事件处理
+  function handleMouseOut(e) {
+    if (!highlightEnabled) return;
+    var relatedTarget = e.relatedTarget;
+
+    // 如果鼠标移动到高亮相关元素上，不隐藏高亮
+    if (relatedTarget && (relatedTarget === highlightBox || relatedTarget === tagLabel || relatedTarget === overlay || relatedTarget === selectedBox || relatedTarget === selectedLabel)) {
+      return;
+    }
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: null,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 点击事件处理
+  function handleClick(e) {
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免处理 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 检查是否是交互元素，这些元素需要保留默认行为
+    var isInteractiveElement = ['input', 'textarea', 'select', 'button', 'a'].includes(target.tagName.toLowerCase());
+
+    // 如果高亮功能启用，对于非交互元素阻止默认行为和事件传播
+    if (highlightEnabled) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+    console.log("Element clicked:", {
+      tagName: target.tagName,
+      selector: selector,
+      rect: rect
+    });
+
+    // 立即更新选中高亮
+    updateSelectedHighlight(target);
+
+    // 隐藏悬停高亮，因为现在是选中状态
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-click",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 监听来自父窗口的消息
+  function handleParentMessage(event) {
+    console.log("Received message from parent:", event.data);
+    if (event.data.type === "iframe-highlight-toggle") {
+      var enabled = event.data.enabled;
+      console.log("Highlight toggle:", enabled);
+      if (enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "enable-iframe-highlight") {
+      console.log("Enable iframe highlight");
+      enableHighlight();
+    } else if (event.data.type === "disable-iframe-highlight") {
+      console.log("Disable iframe highlight");
+      disableHighlight();
+    } else if (event.data.type === "toggle-iframe-highlight") {
+      var _enabled = event.data.enabled !== undefined ? event.data.enabled : !highlightEnabled;
+      console.log("Toggle iframe highlight to:", _enabled);
+      if (_enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "update-selected-element") {
+      var selector = event.data.selector;
+      console.log("Update selected element with selector:", selector);
+      if (selector) {
+        try {
+          var element = document.querySelector(selector);
+          console.log("Found element by selector:", element);
+          updateSelectedHighlight(element);
+        } catch (error) {
+          console.warn("Failed to select element:", error);
+          updateSelectedHighlight(null);
+        }
+      } else {
+        updateSelectedHighlight(null);
+      }
+    } else if (event.data.type === "clear-selected-element") {
+      console.log("Clear selected element");
+      updateSelectedHighlight(null);
+    }
+  }
+
+  // 启用高亮功能
+  function enableHighlight() {
+    console.log("Enabling highlight");
+    document.addEventListener("mouseover", handleMouseOver, true);
+    document.addEventListener("mouseout", handleMouseOut, true);
+    document.addEventListener("click", handleClick, true);
+    highlightEnabled = true;
+    overlay.style.display = "block";
+  }
+
+  // 禁用高亮功能
+  function disableHighlight() {
+    console.log("Disabling highlight");
+    highlightEnabled = false;
+    // 保持事件监听器，但通过 highlightEnabled 变量控制行为
+    // 这样可以保留选中状态的显示
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    // 不隐藏 selectedBox 和 selectedLabel，保留选中状态
+  }
+
+  // 完全禁用高亮功能（移除所有监听器）
+  function fullyDisableHighlight() {
+    console.log("Fully disabling highlight");
+    highlightEnabled = false;
+    document.removeEventListener("mouseover", handleMouseOver, true);
+    document.removeEventListener("mouseout", handleMouseOut, true);
+    document.removeEventListener("click", handleClick, true);
+    overlay.style.display = "none";
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    selectedBox.style.display = "none";
+    selectedLabel.style.display = "none";
+  }
+
+  // 添加事件监听
+  enableHighlight();
+  window.addEventListener("message", handleParentMessage);
+
+  // 暴露全局函数供外部调用
+  window.__iframeHighlightControl = {
+    enable: enableHighlight,
+    disable: disableHighlight,
+    fullyDisable: fullyDisableHighlight,
+    isEnabled: function isEnabled() {
+      return highlightEnabled;
+    },
+    getSelectedElement: function getSelectedElement() {
+      return selectedElement;
+    },
+    updateSelected: updateSelectedHighlight,
+    // 通过消息发送开关控制
+    sendToggleMessage: function sendToggleMessage(enabled) {
+      window.parent.postMessage({
+        type: 'iframe-highlight-status',
+        enabled: enabled || highlightEnabled,
+        source: 'iframe-highlight-injector'
+      }, '*');
+    }
+  };
+
+  // 通知父窗口脚本已加载
+  try {
+    window.parent.postMessage({
+      type: "iframe-highlight-ready",
+      data: {
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: Date.now()
+      },
+      source: "iframe-highlight-injector"
+    }, "*");
+  } catch (error) {
+    console.warn("无法发送就绪消息到父窗口:", error);
+  }
+
+  // 清理函数
+  window.__iframeHighlightCleanup = function () {
+    fullyDisableHighlight();
+    window.removeEventListener("message", handleParentMessage);
+    if (overlay.parentElement) {
+      overlay.parentElement.removeChild(overlay);
+    }
+    delete window.__iframeHighlightInitialized;
+    delete window.__iframeHighlightCleanup;
+  };
+})();
+
+</script>
+<style>
+#minimax-floating-ball {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 12px;
+  background: #222222;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  color: #F8F8F8;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  z-index: 9999;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+#minimax-floating-ball:hover {
+  transform: translateY(-2px);
+  background: #383838;
+}
+.minimax-ball-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.minimax-logo-wave {
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg%20preserveAspectRatio%3D%27none%27%20width%3D%27100%25%27%20height%3D%27100%25%27%20overflow%3D%27visible%27%20style%3D%27display%3A%20block%3B%27%20viewBox%3D%270%200%20170.136%20138.225%27%20fill%3D%27none%27%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%3E%3Cg%20id%3D%27Frame%202116748449%27%3E%3Cpath%20id%3D%27Subtract%27%20d%3D%27M170%20101.783C170%20105.144%20168.49%20108.327%20165.886%20110.453L134.963%20135.702C132.964%20137.334%20130.463%20138.225%20127.883%20138.225H10.4938C4.69824%20138.225%200%20133.527%200%20127.732V39.2289C0%2035.8597%201.51758%2032.6698%204.13162%2030.5442L38.5402%202.56547C40.536%200.942662%2043.0298%200.0567377%2045.602%200.0567377H159.506C165.302%200.0567377%20170%204.75498%20170%2010.5506V101.783Z%27%20fill%3D%27black%27%20style%3D%27fill%3Ablack%3Bfill-opacity%3A1%3B%27/%3E%3Cpath%20id%3D%27Subtract_2%27%20d%3D%27M149.011%2094.4632C149.011%2096.1471%20148.253%2097.7415%20146.946%2098.8043L125.893%20115.936C124.895%20116.748%20123.648%20117.191%20122.361%20117.191H24.6479C22.716%20117.191%2021.15%20115.625%2021.15%20113.693V46.1166C21.15%2044.4267%2021.9135%2042.8274%2023.2274%2041.7648L47.367%2022.2437C48.3638%2021.4376%2049.607%2020.9982%2050.8888%2020.9988L145.514%2021.0427C147.446%2021.0436%20149.011%2022.6094%20149.011%2024.5406V94.4632Z%27%20fill%3D%27white%27%20style%3D%27fill%3Awhite%3Bfill-opacity%3A1%3B%27/%3E%3Cpath%20id%3D%27Rectangle%20111142564%27%20d%3D%27M42.111%2080.8025C42.111%2077.7115%2044.6167%2075.2057%2047.7077%2075.2057H60.9999C64.0908%2075.2057%2066.5966%2077.7115%2066.5966%2080.8025V121.029H42.111V80.8025Z%27%20fill%3D%27black%27%20style%3D%27fill%3Ablack%3Bfill-opacity%3A1%3B%27/%3E%3Cpath%20id%3D%27Rectangle%20111142567%27%20d%3D%27M79.1894%2080.8025C79.1894%2077.7115%2081.6952%2075.2057%2084.7861%2075.2057H98.0783C101.169%2075.2057%20103.675%2077.7115%20103.675%2080.8025V121.029H79.1894V80.8025Z%27%20fill%3D%27black%27%20style%3D%27fill%3Ablack%3Bfill-opacity%3A1%3B%27/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 14px 11px;
+  background-color: #8FD1FF;
+  border-radius: 4px;
+}
+
+.minimax-ball-text {
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.minimax-close-icon {
+  margin-left: 8px;
+  font-size: 16px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.minimax-close-icon:hover {
+  opacity: 1;
+}
+</style>
+<div id="minimax-floating-ball">
+  <div class="minimax-ball-content">
+    <div class="minimax-logo-wave"></div>
+    <span class="minimax-ball-text">Created by MiniMax Agent</span>
+  </div>
+  <div class="minimax-close-icon">×</div>
+</div>
+<script>
+// Initialize floating ball functionality
+function initFloatingBall() {
+  const ball = document.getElementById('minimax-floating-ball');
+  if (!ball) return;
+
+  // Initial animation
+  ball.style.opacity = '0';
+  ball.style.transform = 'translateY(20px)';
+
+  setTimeout(() => {
+    ball.style.opacity = '1';
+    ball.style.transform = 'translateY(0)';
+  }, 500);
+
+  // Handle logo click
+  const ballContent = ball.querySelector('.minimax-ball-content');
+  ballContent.addEventListener('click', function (e) {
+    e.stopPropagation();
+    window.open('https://agent.minimax.io/', '_blank');
+    ball.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+      ball.style.transform = 'scale(1)';
+    }, 100);
+  });
+
+  // Handle close button click
+  const closeIcon = ball.querySelector('.minimax-close-icon');
+  closeIcon.addEventListener('click', function (e) {
+    e.stopPropagation();
+    ball.style.opacity = '0';
+    ball.style.transform = 'translateY(20px)';
+
+    setTimeout(() => {
+      ball.style.display = 'none';
+    }, 300);
+  });
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', initFloatingBall); 
+</script>
+</body>
+</html>
