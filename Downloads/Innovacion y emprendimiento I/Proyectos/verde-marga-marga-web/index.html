@@ -39,29 +39,29 @@
     body { background-color: #F8FAFC; color: #1E293B; font-family: 'Inter', system-ui, sans-serif; }
     h1, h2, h3, h4, h5, h6 { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
     .font-mono { font-family: 'JetBrains Mono', monospace; }
-    .btn-primary { @apply px-6 py-3 bg-gradient-to-r from-eco-green to-eco-blue text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200; }
-    .btn-secondary { @apply px-6 py-3 border-2 border-eco-green text-eco-green font-semibold rounded-xl hover:bg-eco-green hover:text-white transition-all duration-200; }
-    .card { @apply bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md hover:border-eco-green/20 transition-all duration-300; }
-    .stat-card { @apply bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col gap-3 hover:shadow-md transition-shadow duration-300; }
-    .nav-item { @apply flex flex-col items-center gap-1 p-3 text-gray-500 hover:text-eco-green transition-colors duration-200; }
-    .input-field { @apply w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-eco-green/50 focus:border-eco-green placeholder:text-gray-400 transition-all duration-200; }
-    .badge { @apply inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-eco-green/10 text-eco-green; }
+    .btn-primary { padding: 0.75rem 1.5rem; background: linear-gradient(to right, #00C896, #00A8E8); color: white; font-weight: 600; border-radius: 0.75rem; border: none; cursor: pointer; transition: all 0.2s; }
+    .btn-primary:hover { opacity: 0.9; transform: scale(1.02); }
+    .btn-secondary { padding: 0.75rem 1.5rem; border: 2px solid #00C896; color: #00C896; font-weight: 600; border-radius: 0.75rem; background: transparent; cursor: pointer; transition: all 0.2s; }
+    .btn-secondary:hover { background: #00C896; color: white; }
+    .card { background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #f3f4f6; transition: all 0.3s; }
+    .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .stat-card { background: white; border-radius: 1rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #f3f4f6; display: flex; flex-direction: column; gap: 0.75rem; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; padding: 0.75rem; color: #6b7280; transition: color 0.2s; }
+    .nav-item:hover { color: #00C896; }
+    .input-field { width: 100%; padding: 0.75rem 1rem; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.75rem; outline: none; transition: all 0.2s; }
+    .input-field:focus { border-color: #00C896; box-shadow: 0 0 0 2px rgba(0,200,150,0.2); }
+    .badge { display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; font-size: 0.75rem; font-weight: 500; border-radius: 9999px; background-color: rgba(0,200,150,0.1); color: #00C896; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
     .animate-float { animation: float 3s ease-in-out infinite; }
   </style>
-  <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
   <div id="root"></div>
   <script type="text/babel">
     const { useState } = React;
 
-    // Mock Data
     const mockUser = {
       name: 'María González',
       avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face',
@@ -91,7 +91,6 @@
       { id: 4, title: 'Maestro del Compost', description: 'Aprende sobre compostaje', icon: '🍃', unlocked: false, progress: 60 },
     ];
 
-    // Icons
     const Icon = ({ name }) => {
       const icons = {
         Home: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>,
@@ -106,7 +105,6 @@
         Lightbulb: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>,
         MapPin: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>,
         QrCode: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>,
-        Search: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg>,
         ChevronRight: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>,
         Check: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20,6 9,17 4,12"/></svg>,
         X: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>,
@@ -122,7 +120,6 @@
       return icons[name] || <span>{name}</span>;
     };
 
-    // Bottom Navigation
     const BottomNav = ({ currentPage, setCurrentPage }) => {
       const navItems = [
         { id: 'home', label: 'Inicio', icon: 'Home' },
@@ -145,7 +142,6 @@
       );
     };
 
-    // Home Page
     const HomePage = () => (
       <div className="min-h-screen pb-24">
         <header className="px-4 pt-6 pb-4">
@@ -173,15 +169,9 @@
             </div>
           </div>
           <div className="grid grid-cols-3 gap-2">
-            <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 text-center">
-              <div className="text-lg mb-1">🔥</div><div className="font-bold text-sm">{mockUser.streak} días</div><div className="text-xs text-gray-500">Racha actual</div>
-            </div>
-            <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 text-center">
-              <div className="text-lg mb-1">🏆</div><div className="font-bold text-sm">{mockUser.achievements}</div><div className="text-xs text-gray-500">Logros</div>
-            </div>
-            <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 text-center">
-              <div className="text-lg mb-1">📊</div><div className="font-bold text-sm">#{mockUser.rank}</div><div className="text-xs text-gray-500">Ranking</div>
-            </div>
+            <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 text-center"><div className="text-lg mb-1">🔥</div><div className="font-bold text-sm">{mockUser.streak} días</div><div className="text-xs text-gray-500">Racha actual</div></div>
+            <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 text-center"><div className="text-lg mb-1">🏆</div><div className="font-bold text-sm">{mockUser.achievements}</div><div className="text-xs text-gray-500">Logros</div></div>
+            <div className="bg-white/50 backdrop-blur-sm rounded-xl p-3 text-center"><div className="text-lg mb-1">📊</div><div className="font-bold text-sm">#{mockUser.rank}</div><div className="text-xs text-gray-500">Ranking</div></div>
           </div>
           <section>
             <h2 className="font-heading font-semibold text-gray-800 mb-3">Tu Impacto Ambiental</h2>
@@ -212,7 +202,6 @@
       </div>
     );
 
-    // Recycling Page
     const RecyclingPage = ({ onScan }) => {
       const types = [
         { id: 'glass', label: 'Vidrio', icon: '🍷', points: '15 EP/kg' },
@@ -245,7 +234,7 @@
                   <div key={type.id} className="bg-white rounded-2xl p-4 border border-gray-100 hover:shadow-md transition-all">
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-eco-green to-eco-blue flex items-center justify-center mb-3 text-2xl">{type.icon}</div>
                     <h3 className="font-semibold text-gray-800 mb-1">{type.label}</h3>
-                    <div className="flex items-center justify-between"><span className="text-sm font-bold text-eco-green">{type.points}</span></div>
+                    <span className="text-sm font-bold text-eco-green">{type.points}</span>
                   </div>
                 ))}
               </div>
@@ -255,7 +244,6 @@
       );
     };
 
-    // Marketplace Page
     const MarketplacePage = ({ onRedeem }) => (
       <div className="min-h-screen pb-24">
         <header className="px-4 pt-6 pb-4">
@@ -271,8 +259,13 @@
               {mockBenefits.map((benefit) => (
                 <div key={benefit.id} className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all">
                   <div className="relative h-36"><img src={benefit.image} alt={benefit.title} className="w-full h-full object-cover" /><div className="absolute top-3 left-3"><span className="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium">{benefit.category}</span></div></div>
-                  <div className="p-4"><h3 className="font-semibold text-gray-800 mb-1 text-sm line-clamp-1">{benefit.title}</h3><p className="text-sm text-gray-500 mb-3">{benefit.company}</p>
-                    <div className="flex items-center justify-between"><div className="flex items-center gap-2"><span className="text-lg font-bold text-eco-green">{benefit.pointsCost}</span><span className="text-sm text-gray-400">EP</span></div><button onClick={() => onRedeem(benefit)} className="px-4 py-2 bg-eco-green text-white text-sm font-medium rounded-lg hover:bg-eco-green/90 transition-colors">Canjear</button></div>
+                  <div className="p-4">
+                    <h3 className="font-semibold text-gray-800 mb-1 text-sm">{benefit.title}</h3>
+                    <p className="text-sm text-gray-500 mb-3">{benefit.company}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2"><span className="text-lg font-bold text-eco-green">{benefit.pointsCost}</span><span className="text-sm text-gray-400">EP</span></div>
+                      <button onClick={() => onRedeem(benefit)} className="px-4 py-2 bg-eco-green text-white text-sm font-medium rounded-lg">Canjear</button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -282,9 +275,8 @@
       </div>
     );
 
-    // Map Page
     const MapPage = () => {
-      const statusConfig = { available: { color: '#10B981', label: 'Disponible' }, near_full: { color: '#F59E0B', label: 'Casi lleno' }, full: { color: '#EF4444', label: 'Lleno' } };
+      const statusConfig = { available: { color: '#10B981' }, near_full: { color: '#F59E0B' }, full: { color: '#EF4444' } };
       return (
         <div className="min-h-screen pb-24 relative">
           <div className="h-[60vh] relative bg-gradient-to-br from-blue-50 via-green-50 to-blue-100">
@@ -292,7 +284,7 @@
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"><div className="relative"><div className="absolute -inset-4 bg-eco-blue/20 rounded-full animate-pulse" /><div className="w-4 h-4 bg-eco-blue rounded-full border-4 border-white shadow-lg" /></div></div>
             {mockRecyclingPoints.map((point, i) => {
               const positions = [{ left: '20%', top: '30%' }, { left: '70%', top: '25%' }, { left: '25%', top: '65%' }, { left: '65%', top: '70%' }];
-              const status = statusConfig[point.status];
+              const status = statusConfig[point.status] || statusConfig.available;
               return <div key={point.id} className="absolute w-10 h-10 rounded-xl flex items-center justify-center shadow-lg border-2 border-white cursor-pointer hover:scale-110 transition-transform" style={{ ...positions[i], backgroundColor: status.color }}><span className="text-white text-lg">♻️</span></div>;
             })}
           </div>
@@ -313,14 +305,12 @@
       );
     };
 
-    // Profile Page
     const ProfilePage = () => (
-      <div className="min-h-screen pb-24 -mt-6">
+      <div className="min-h-screen pb-24">
         <div className="relative bg-gradient-to-br from-eco-green via-eco-blue to-eco-green p-6 text-white">
-          <div className="absolute inset-0 overflow-hidden opacity-10"><div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white" /></div>
           <div className="relative flex items-center gap-4 mb-6">
             <div className="relative"><img src={mockUser.avatar} alt={mockUser.name} className="w-20 h-20 rounded-2xl object-cover border-4 border-white/30 shadow-lg" /><div className="absolute -bottom-2 -right-2 w-8 h-8 bg-eco-gold rounded-full flex items-center justify-center text-lg">🌿</div></div>
-            <div><h1 className="font-heading font-bold text-2xl">{mockUser.name}</h1><div className="flex items-center gap-2 mt-2"><span className="px-2 py-0.5 bg-white/20 rounded-full text-xs">Arbusto</span><span className="px-2 py-0.5 bg-eco-gold/30 rounded-full text-xs text-eco-gold">Nivel {mockUser.level}</span></div></div>
+            <div><h1 className="font-heading font-bold text-2xl">{mockUser.name}</h1><div className="flex items-center gap-2 mt-2"><span className="px-2 py-0.5 bg-white/20 rounded-full text-xs">Arbusto</span><span className="px-2 py-0.5 bg-eco-gold/30 rounded-full text-xs">Nivel {mockUser.level}</span></div></div>
           </div>
           <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
             <div className="flex justify-between text-sm mb-2"><span>Progreso al nivel {mockUser.level + 1}</span><span>{mockUser.xp} / {mockUser.xpToNextLevel} XP</span></div>
@@ -329,7 +319,7 @@
         </div>
         <div className="mt-6 px-4 space-y-6">
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white rounded-xl p-4 border border-gray-100 text-center"><div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center mx-auto mb-2 text-2xl">🔥</div><div className="text-2xl font-bold font-mono">{mockUser.streak} días</div><div className="text-sm text-gray-500">Racha actual</div></div>
+            <div className="bg-white rounded-xl p-4 border border-gray-100 text-center"><div className="text-2xl mb-1">🔥</div><div className="text-2xl font-bold font-mono">{mockUser.streak} días</div><div className="text-sm text-gray-500">Racha actual</div></div>
             <div className="bg-white rounded-xl p-4 border border-gray-100 text-center"><div className="w-10 h-10 rounded-xl bg-eco-gold/10 flex items-center justify-center mx-auto mb-2"><Icon name="Trophy" /></div><div className="text-2xl font-bold font-mono">{mockUser.achievements}</div><div className="text-sm text-gray-500">Logros obtenidos</div></div>
           </div>
           <div className="space-y-3">
@@ -337,9 +327,8 @@
             <div className="grid grid-cols-2 gap-3">
               {mockAchievements.map((achievement) => (
                 <div key={achievement.id} className={`relative bg-white rounded-xl p-4 border ${achievement.unlocked ? 'border-eco-gold/30 shadow-md' : 'border-gray-100 opacity-60'}`}>
-                  {achievement.unlocked && <div className="absolute top-2 right-2 w-2 h-2 bg-eco-gold rounded-full" />}
                   <div className="text-3xl mb-2">{achievement.icon}</div>
-                  <h3 className={`font-medium text-sm ${achievement.unlocked ? 'text-gray-800' : 'text-gray-500'}`}>{achievement.title}</h3>
+                  <h3 className="font-medium text-sm text-gray-800">{achievement.title}</h3>
                   <p className="text-xs text-gray-500">{achievement.description}</p>
                   {achievement.unlocked && <div className="flex items-center gap-1 text-xs text-eco-gold mt-2"><Icon name="Check" /><span>Desbloqueado</span></div>}
                 </div>
@@ -358,7 +347,6 @@
       </div>
     );
 
-    // Enterprise Page
     const EnterprisePage = () => (
       <div className="min-h-screen pb-24 bg-gray-50">
         <header className="bg-gradient-to-r from-eco-blue to-eco-green p-6 text-white">
@@ -375,13 +363,12 @@
       </div>
     );
 
-    // Municipal Page
     const MunicipalPage = () => (
       <div className="min-h-screen pb-24 bg-gray-50">
         <header className="bg-gradient-to-br from-slate-800 to-slate-900 p-6 text-white">
           <div className="flex items-center gap-4"><div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center"><Icon name="Globe" /></div><div><h1 className="font-heading font-bold text-2xl">Dashboard Comunal</h1><p className="text-white/80 text-sm">Comuna Marga Marga - Viña del Mar</p></div></div>
         </header>
-        <div className="px-4 -mt-4"><div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-lg"><div className="grid grid-cols-2 gap-6"><div className="text-center"><p className="text-4xl font-bold text-eco-green font-mono">45,678</p><p className="text-sm text-gray-500">kg reciclados en 2026</p></div><div className="text-center border-l border-gray-100"><p className="text-4xl font-bold text-eco-blue font-mono">1,247</p><p className="text-sm text-gray-500">usuarios activos</p></div></div></div></div>
+        <div className="px-4 mt-4"><div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-lg"><div className="grid grid-cols-2 gap-6"><div className="text-center"><p className="text-4xl font-bold text-eco-green font-mono">45,678</p><p className="text-sm text-gray-500">kg reciclados en 2026</p></div><div className="text-center border-l border-gray-100"><p className="text-4xl font-bold text-eco-blue font-mono">1,247</p><p className="text-sm text-gray-500">usuarios activos</p></div></div></div></div>
         <div className="px-4 mt-4 grid grid-cols-2 gap-3">
           <div className="bg-white rounded-2xl p-5 border border-gray-100"><div className="w-12 h-12 rounded-xl bg-eco-green/10 flex items-center justify-center mb-3"><Icon name="Leaf" /></div><div className="text-3xl font-bold font-mono text-eco-green">123t</div><div className="text-sm text-gray-500">CO₂ Ahorrado</div></div>
           <div className="bg-white rounded-2xl p-5 border border-gray-100"><div className="w-12 h-12 rounded-xl bg-eco-blue/10 flex items-center justify-center mb-3"><Icon name="Globe" /></div><div className="text-3xl font-bold font-mono text-eco-blue">890k</div><div className="text-sm text-gray-500">Puntos Distribuidos</div></div>
@@ -393,10 +380,11 @@
       </div>
     );
 
-    // Modal
-    const Modal = ({ isOpen, onClose, children }) => { if (!isOpen) return null; return <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={onClose}><div className="bg-white rounded-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>{children}</div></div>; };
+    const Modal = ({ isOpen, onClose, children }) => {
+      if (!isOpen) return null;
+      return <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={onClose}><div className="bg-white rounded-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>{children}</div></div>;
+    };
 
-    // Scan Modal
     const ScanModal = ({ isOpen, onClose, onScanComplete }) => {
       const [step, setStep] = useState('idle');
       const handleScan = () => {
@@ -413,11 +401,11 @@
               <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-eco-green rounded-br-xl" />
               <div className="absolute inset-0 flex items-center justify-center">
                 {step === 'scanning' && <div className="text-5xl animate-pulse"><Icon name="QrCode" /></div>}
-                {step === 'validating' && <div className="text-5xl animate-spin">⏳</div>}
+                {step === 'validating' && <div className="text-5xl">⏳</div>}
                 {step === 'success' && <div className="text-5xl text-eco-green"><Icon name="Check" /></div>}
               </div>
             </div>
-            <button onClick={onClose} className="absolute top-4 right-4 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center"><Icon name="X" /></button>
+            <button onClick={onClose} className="absolute top-4 right-4 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center"><Icon name="X" /></button>
           </div>
           <div className="p-6 text-center">
             {step === 'idle' && <><h3 className="font-heading font-bold text-xl mb-2">Escanear QR</h3><p className="text-gray-500 text-sm mb-4">Aproxima el código QR del contenedor</p><button onClick={handleScan} className="w-full btn-primary">Iniciar Escaneo</button></>}
@@ -429,11 +417,10 @@
       );
     };
 
-    // Success Modal
     const SuccessModal = ({ isOpen, onClose, points }) => (
       <Modal isOpen={isOpen} onClose={onClose}>
         <div className="p-8 text-center">
-          <div className="w-20 h-20 mx-auto mb-4 bg-eco-green rounded-full flex items-center justify-center text-4xl animate-bounce">🎉</div>
+          <div className="w-20 h-20 mx-auto mb-4 bg-eco-green rounded-full flex items-center justify-center text-4xl">🎉</div>
           <h3 className="font-heading font-bold text-xl mb-2">¡Canje Exitoso!</h3>
           <p className="text-gray-500 mb-4">Has canjeado <span className="font-bold text-eco-green">{points} EP</span></p>
           <button onClick={onClose} className="w-full btn-primary">Continuar</button>
@@ -441,7 +428,6 @@
       </Modal>
     );
 
-    // Main App
     const App = () => {
       const [currentPage, setCurrentPage] = useState('home');
       const [showScan, setShowScan] = useState(false);
@@ -449,17 +435,30 @@
       const [lastRedeemed, setLastRedeemed] = useState(null);
       const handleRedeem = (benefit) => { setLastRedeemed(benefit); setShowSuccess(true); };
       const handleScanComplete = () => {};
-      const renderPage = () => { switch (currentPage) { case 'home': return <HomePage />; case 'recycling': return <RecyclingPage onScan={() => setShowScan(true)} />; case 'marketplace': return <MarketplacePage onRedeem={handleRedeem} />; case 'map': return <MapPage />; case 'profile': return <ProfilePage />; case 'enterprise': return <EnterprisePage />; case 'municipal': return <MunicipalPage />; default: return <HomePage />; } };
+      const renderPage = () => {
+        switch (currentPage) {
+          case 'home': return <HomePage />;
+          case 'recycling': return <RecyclingPage onScan={() => setShowScan(true)} />;
+          case 'marketplace': return <MarketplacePage onRedeem={handleRedeem} />;
+          case 'map': return <MapPage />;
+          case 'profile': return <ProfilePage />;
+          case 'enterprise': return <EnterprisePage />;
+          case 'municipal': return <MunicipalPage />;
+          default: return <HomePage />;
+        }
+      };
       const showBottomNav = !['enterprise', 'municipal'].includes(currentPage);
       return (
         <div className="min-h-screen bg-eco-light">
           {renderPage()}
           {showBottomNav && <BottomNav currentPage={currentPage} setCurrentPage={setCurrentPage} />}
-          {!showBottomNav && <div className="fixed top-4 left-4 z-50 flex gap-2">
-            <button onClick={() => setCurrentPage('enterprise')} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${currentPage === 'enterprise' ? 'bg-eco-blue text-white shadow-md' : 'bg-white text-gray-600'}`}>Empresa</button>
-            <button onClick={() => setCurrentPage('municipal')} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${currentPage === 'municipal' ? 'bg-eco-blue text-white shadow-md' : 'bg-white text-gray-600'}`}>Municipal</button>
-            <button onClick={() => setCurrentPage('home')} className="px-4 py-2 bg-white text-gray-600 rounded-xl text-sm font-medium">Usuario</button>
-          </div>}
+          {!showBottomNav && (
+            <div className="fixed top-4 left-4 z-50 flex gap-2">
+              <button onClick={() => setCurrentPage('enterprise')} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${currentPage === 'enterprise' ? 'bg-eco-blue text-white shadow-md' : 'bg-white text-gray-600'}`}>Empresa</button>
+              <button onClick={() => setCurrentPage('municipal')} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${currentPage === 'municipal' ? 'bg-eco-blue text-white shadow-md' : 'bg-white text-gray-600'}`}>Municipal</button>
+              <button onClick={() => setCurrentPage('home')} className="px-4 py-2 bg-white text-gray-600 rounded-xl text-sm font-medium">Usuario</button>
+            </div>
+          )}
           <ScanModal isOpen={showScan} onClose={() => setShowScan(false)} onScanComplete={handleScanComplete} />
           <SuccessModal isOpen={showSuccess} onClose={() => setShowSuccess(false)} points={lastRedeemed?.pointsCost} />
         </div>
@@ -468,593 +467,5 @@
 
     ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
-
-<script>
-/**
- * Iframe 元素高亮注入脚本
- * 需要在目标网站中引入此脚本来支持跨域 iframe 高亮功能
- *
- * 使用方法：
- * 1. 将此脚本添加到目标网站的 HTML 中
- * 2. 或通过浏览器扩展、用户脚本等方式注入
- */
-
-(function () {
-  "use strict";
-
-  // 检查是否在 iframe 中
-  if (window.self === window.top) {
-    return; // 不在 iframe 中，不执行
-  }
-
-  // 检查是否已经初始化过
-  if (window.__iframeHighlightInitialized) {
-    return;
-  }
-  window.__iframeHighlightInitialized = true;
-  console.log("Iframe 高亮脚本已加载");
-
-  // 创建高亮覆盖层
-  var overlay = document.createElement("div");
-  overlay.id = "iframe-highlight-overlay";
-  overlay.style.cssText = "\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100vw;\n    height: 100vh;\n    pointer-events: none;\n    z-index: 999999;\n    overflow: hidden;\n  ";
-
-  // 创建悬停高亮框（虚线边框）
-  var highlightBox = document.createElement("div");
-  highlightBox.id = "iframe-highlight-box";
-  highlightBox.style.cssText = "\n    position: absolute;\n    border: 2px dashed #007AFF;\n    background: rgba(0, 122, 255, 0.08);\n    pointer-events: none;\n    display: none;\n    transition: all 0.1s ease;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);\n    border-radius: 2px;\n  ";
-
-  // 创建选中节点的常驻高亮框（实线边框）
-  var selectedBox = document.createElement("div");
-  selectedBox.id = "iframe-selected-box";
-  selectedBox.style.cssText = "\n    position: absolute;\n    border: 2px solid #007AFF;\n    pointer-events: none;\n    display: none;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 107, 53, 0.4);\n    border-radius: 2px;\n    z-index: 1000000;\n  ";
-
-  // 创建悬停标签显示
-  var tagLabel = document.createElement("div");
-  tagLabel.id = "iframe-tag-label";
-  tagLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 2px 6px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 2px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000001;\n    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n    font-weight: 500;\n  ";
-
-  // 创建选中节点标签
-  var selectedLabel = document.createElement("div");
-  selectedLabel.id = "iframe-selected-label";
-  selectedLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 3px 8px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 3px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000002;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);\n    font-weight: 600;\n  ";
-  overlay.appendChild(highlightBox);
-  overlay.appendChild(selectedBox);
-  overlay.appendChild(tagLabel);
-  overlay.appendChild(selectedLabel);
-  document.body.appendChild(overlay);
-
-  // 存储当前选中的元素
-  var selectedElement = null;
-  var highlightEnabled = false;
-
-  // 更新选中元素的高亮显示
-  function updateSelectedHighlight(element) {
-    console.log("updateSelectedHighlight called with:", element);
-    if (!element) {
-      selectedBox.style.display = "none";
-      selectedLabel.style.display = "none";
-      selectedElement = null;
-      console.log("Cleared selected highlight");
-      return;
-    }
-    selectedElement = element;
-    var rect = element.getBoundingClientRect();
-    console.log("Selected element rect:", rect);
-
-    // 更新选中高亮框位置
-    selectedBox.style.display = "block";
-    selectedBox.style.left = "".concat(rect.left - 2, "px");
-    selectedBox.style.top = "".concat(rect.top - 2, "px");
-    selectedBox.style.width = "".concat(rect.width + 4, "px");
-    selectedBox.style.height = "".concat(rect.height + 4, "px");
-
-    // 更新选中标签位置和内容
-    selectedLabel.style.display = "block";
-    selectedLabel.textContent = "\u2713 <".concat(element.tagName.toLowerCase(), ">");
-
-    // 计算标签位置，确保不超出视窗
-    var labelTop = rect.top - 28;
-    var labelLeft = rect.left;
-
-    // 如果标签会超出顶部，显示在元素下方
-    if (labelTop < 5) {
-      labelTop = rect.bottom + 5;
-    }
-
-    // 如果标签会超出右侧，向左调整
-    var labelWidth = selectedLabel.offsetWidth || 100; // 预估宽度
-    if (labelLeft + labelWidth > window.innerWidth - 10) {
-      labelLeft = window.innerWidth - labelWidth - 10;
-    }
-    selectedLabel.style.left = "".concat(Math.max(5, labelLeft), "px");
-    selectedLabel.style.top = "".concat(labelTop, "px");
-    console.log("Selected highlight positioned at:", {
-      left: selectedBox.style.left,
-      top: selectedBox.style.top,
-      width: selectedBox.style.width,
-      height: selectedBox.style.height
-    });
-  }
-  function getElementSelector(element) {
-    if (!(element instanceof Element)) throw new Error('Argument must be a DOM element');
-    var segments = [];
-    var current = element;
-    while (current !== document.documentElement) {
-      var selector = '';
-      // 优先检查唯一ID
-      if (current.id && document.querySelectorAll("#".concat(current.id)).length === 1) {
-        segments.unshift("#".concat(current.id));
-        break; // ID唯一，无需继续向上
-      }
-
-      // 生成类名选择器（取第一个有效类名）
-      var classes = Array.from(current.classList).filter(function (c) {
-        return !c.startsWith('js-');
-      });
-      var className = classes.length > 0 ? ".".concat(classes[0]) : '';
-
-      // 生成位置索引（nth-child）
-      var tag = current.tagName.toLowerCase();
-      if (!className) {
-        var siblings = Array.from(current.parentNode.children);
-        var index = siblings.findIndex(function (el) {
-          return el === current;
-        }) + 1;
-        selector = "".concat(tag, ":nth-child(").concat(index, ")");
-      } else {
-        selector = className;
-      }
-      segments.unshift(selector);
-      current = current.parentElement;
-    }
-
-    // 处理根元素
-    if (current === document.documentElement) {
-      segments.unshift('html');
-    }
-    return segments.join(' > ');
-  }
-
-  // 获取元素文本内容
-  function getElementText(element) {
-    var _element$textContent;
-    if (element.tagName === "INPUT") {
-      return element.value || element.placeholder || "";
-    }
-    if (element.tagName === "TEXTAREA") {
-      return element.value || element.placeholder || "";
-    }
-    var text = ((_element$textContent = element.textContent) === null || _element$textContent === void 0 ? void 0 : _element$textContent.trim()) || "";
-    return text.length > 50 ? text.substring(0, 50) + "..." : text;
-  }
-
-  // 获取元素属性信息
-  function getElementAttributes(element) {
-    var attrs = {};
-    for (var i = 0; i < element.attributes.length; i++) {
-      var attr = element.attributes[i];
-      attrs[attr.name] = attr.value;
-    }
-    return attrs;
-  }
-
-  // 鼠标悬停事件处理
-  function handleMouseOver(e) {
-    if (!highlightEnabled) return;
-    var target = e.target;
-    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
-      return;
-    }
-
-    // 避免高亮 html 和 body 元素
-    if (target === document.documentElement || target === document.body) {
-      return;
-    }
-
-    // 如果是已选中的元素，不显示悬停高亮
-    if (target === selectedElement) {
-      highlightBox.style.display = "none";
-      tagLabel.style.display = "none";
-      return;
-    }
-    var rect = target.getBoundingClientRect();
-    var selector = getElementSelector(target);
-    var text = getElementText(target);
-    var attributes = getElementAttributes(target);
-
-    // 更新悬停高亮框位置
-    highlightBox.style.display = "block";
-    highlightBox.style.left = "".concat(rect.left - 2, "px");
-    highlightBox.style.top = "".concat(rect.top - 2, "px");
-    highlightBox.style.width = "".concat(rect.width + 4, "px");
-    highlightBox.style.height = "".concat(rect.height + 4, "px");
-
-    // 更新标签位置和内容
-    tagLabel.style.display = "block";
-    tagLabel.textContent = "<".concat(target.tagName.toLowerCase(), ">");
-
-    // 计算标签位置，确保不超出视窗
-    var labelTop = rect.top - 22;
-    var labelLeft = rect.left;
-
-    // 如果标签会超出顶部，显示在元素下方
-    if (labelTop < 0) {
-      labelTop = rect.bottom + 5;
-    }
-
-    // 如果标签会超出右侧，向左调整
-    if (labelLeft + tagLabel.offsetWidth > window.innerWidth) {
-      labelLeft = window.innerWidth - tagLabel.offsetWidth - 5;
-    }
-    tagLabel.style.left = "".concat(Math.max(0, labelLeft), "px");
-    tagLabel.style.top = "".concat(labelTop, "px");
-
-    // 发送消息到父窗口
-    var elementInfo = {
-      tagName: target.tagName.toLowerCase(),
-      rect: {
-        left: rect.left,
-        top: rect.top,
-        right: rect.right,
-        bottom: rect.bottom,
-        width: rect.width,
-        height: rect.height,
-        x: rect.x,
-        y: rect.y
-      },
-      selector: selector,
-      text: text,
-      attributes: attributes,
-      url: window.location.href,
-      path: window.location.pathname,
-      timestamp: Date.now()
-    };
-    try {
-      window.parent.postMessage({
-        type: "iframe-element-hover",
-        data: elementInfo,
-        source: "iframe-highlight-injector"
-      }, "*");
-    } catch (error) {
-      console.warn("无法发送消息到父窗口:", error);
-    }
-  }
-
-  // 鼠标离开事件处理
-  function handleMouseOut(e) {
-    if (!highlightEnabled) return;
-    var relatedTarget = e.relatedTarget;
-
-    // 如果鼠标移动到高亮相关元素上，不隐藏高亮
-    if (relatedTarget && (relatedTarget === highlightBox || relatedTarget === tagLabel || relatedTarget === overlay || relatedTarget === selectedBox || relatedTarget === selectedLabel)) {
-      return;
-    }
-    highlightBox.style.display = "none";
-    tagLabel.style.display = "none";
-    try {
-      window.parent.postMessage({
-        type: "iframe-element-hover",
-        data: null,
-        source: "iframe-highlight-injector"
-      }, "*");
-    } catch (error) {
-      console.warn("无法发送消息到父窗口:", error);
-    }
-  }
-
-  // 点击事件处理
-  function handleClick(e) {
-    var target = e.target;
-    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
-      return;
-    }
-
-    // 避免处理 html 和 body 元素
-    if (target === document.documentElement || target === document.body) {
-      return;
-    }
-
-    // 检查是否是交互元素，这些元素需要保留默认行为
-    var isInteractiveElement = ['input', 'textarea', 'select', 'button', 'a'].includes(target.tagName.toLowerCase());
-
-    // 如果高亮功能启用，对于非交互元素阻止默认行为和事件传播
-    if (highlightEnabled) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    var rect = target.getBoundingClientRect();
-    var selector = getElementSelector(target);
-    var text = getElementText(target);
-    var attributes = getElementAttributes(target);
-    console.log("Element clicked:", {
-      tagName: target.tagName,
-      selector: selector,
-      rect: rect
-    });
-
-    // 立即更新选中高亮
-    updateSelectedHighlight(target);
-
-    // 隐藏悬停高亮，因为现在是选中状态
-    highlightBox.style.display = "none";
-    tagLabel.style.display = "none";
-    var elementInfo = {
-      tagName: target.tagName.toLowerCase(),
-      rect: {
-        left: rect.left,
-        top: rect.top,
-        right: rect.right,
-        bottom: rect.bottom,
-        width: rect.width,
-        height: rect.height,
-        x: rect.x,
-        y: rect.y
-      },
-      selector: selector,
-      text: text,
-      attributes: attributes,
-      url: window.location.href,
-      path: window.location.pathname,
-      timestamp: Date.now()
-    };
-    try {
-      window.parent.postMessage({
-        type: "iframe-element-click",
-        data: elementInfo,
-        source: "iframe-highlight-injector"
-      }, "*");
-    } catch (error) {
-      console.warn("无法发送消息到父窗口:", error);
-    }
-  }
-
-  // 监听来自父窗口的消息
-  function handleParentMessage(event) {
-    console.log("Received message from parent:", event.data);
-    if (event.data.type === "iframe-highlight-toggle") {
-      var enabled = event.data.enabled;
-      console.log("Highlight toggle:", enabled);
-      if (enabled) {
-        enableHighlight();
-      } else {
-        disableHighlight();
-      }
-    } else if (event.data.type === "enable-iframe-highlight") {
-      console.log("Enable iframe highlight");
-      enableHighlight();
-    } else if (event.data.type === "disable-iframe-highlight") {
-      console.log("Disable iframe highlight");
-      disableHighlight();
-    } else if (event.data.type === "toggle-iframe-highlight") {
-      var _enabled = event.data.enabled !== undefined ? event.data.enabled : !highlightEnabled;
-      console.log("Toggle iframe highlight to:", _enabled);
-      if (_enabled) {
-        enableHighlight();
-      } else {
-        disableHighlight();
-      }
-    } else if (event.data.type === "update-selected-element") {
-      var selector = event.data.selector;
-      console.log("Update selected element with selector:", selector);
-      if (selector) {
-        try {
-          var element = document.querySelector(selector);
-          console.log("Found element by selector:", element);
-          updateSelectedHighlight(element);
-        } catch (error) {
-          console.warn("Failed to select element:", error);
-          updateSelectedHighlight(null);
-        }
-      } else {
-        updateSelectedHighlight(null);
-      }
-    } else if (event.data.type === "clear-selected-element") {
-      console.log("Clear selected element");
-      updateSelectedHighlight(null);
-    }
-  }
-
-  // 启用高亮功能
-  function enableHighlight() {
-    console.log("Enabling highlight");
-    document.addEventListener("mouseover", handleMouseOver, true);
-    document.addEventListener("mouseout", handleMouseOut, true);
-    document.addEventListener("click", handleClick, true);
-    highlightEnabled = true;
-    overlay.style.display = "block";
-  }
-
-  // 禁用高亮功能
-  function disableHighlight() {
-    console.log("Disabling highlight");
-    highlightEnabled = false;
-    // 保持事件监听器，但通过 highlightEnabled 变量控制行为
-    // 这样可以保留选中状态的显示
-    highlightBox.style.display = "none";
-    tagLabel.style.display = "none";
-    // 不隐藏 selectedBox 和 selectedLabel，保留选中状态
-  }
-
-  // 完全禁用高亮功能（移除所有监听器）
-  function fullyDisableHighlight() {
-    console.log("Fully disabling highlight");
-    highlightEnabled = false;
-    document.removeEventListener("mouseover", handleMouseOver, true);
-    document.removeEventListener("mouseout", handleMouseOut, true);
-    document.removeEventListener("click", handleClick, true);
-    overlay.style.display = "none";
-    highlightBox.style.display = "none";
-    tagLabel.style.display = "none";
-    selectedBox.style.display = "none";
-    selectedLabel.style.display = "none";
-  }
-
-  // 添加事件监听
-  enableHighlight();
-  window.addEventListener("message", handleParentMessage);
-
-  // 暴露全局函数供外部调用
-  window.__iframeHighlightControl = {
-    enable: enableHighlight,
-    disable: disableHighlight,
-    fullyDisable: fullyDisableHighlight,
-    isEnabled: function isEnabled() {
-      return highlightEnabled;
-    },
-    getSelectedElement: function getSelectedElement() {
-      return selectedElement;
-    },
-    updateSelected: updateSelectedHighlight,
-    // 通过消息发送开关控制
-    sendToggleMessage: function sendToggleMessage(enabled) {
-      window.parent.postMessage({
-        type: 'iframe-highlight-status',
-        enabled: enabled || highlightEnabled,
-        source: 'iframe-highlight-injector'
-      }, '*');
-    }
-  };
-
-  // 通知父窗口脚本已加载
-  try {
-    window.parent.postMessage({
-      type: "iframe-highlight-ready",
-      data: {
-        url: window.location.href,
-        userAgent: navigator.userAgent,
-        timestamp: Date.now()
-      },
-      source: "iframe-highlight-injector"
-    }, "*");
-  } catch (error) {
-    console.warn("无法发送就绪消息到父窗口:", error);
-  }
-
-  // 清理函数
-  window.__iframeHighlightCleanup = function () {
-    fullyDisableHighlight();
-    window.removeEventListener("message", handleParentMessage);
-    if (overlay.parentElement) {
-      overlay.parentElement.removeChild(overlay);
-    }
-    delete window.__iframeHighlightInitialized;
-    delete window.__iframeHighlightCleanup;
-  };
-})();
-
-</script>
-<style>
-#minimax-floating-ball {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 10px 12px;
-  background: #222222;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  color: #F8F8F8;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  z-index: 9999;
-  transition: all 0.3s ease;
-  overflow: hidden;
-  cursor: pointer;
-}
-
-#minimax-floating-ball:hover {
-  transform: translateY(-2px);
-  background: #383838;
-}
-.minimax-ball-content {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.minimax-logo-wave {
-  width: 20px;
-  height: 20px;
-  background-image: url("data:image/svg+xml,%3Csvg%20preserveAspectRatio%3D%27none%27%20width%3D%27100%25%27%20height%3D%27100%25%27%20overflow%3D%27visible%27%20style%3D%27display%3A%20block%3B%27%20viewBox%3D%270%200%20170.136%20138.225%27%20fill%3D%27none%27%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%3E%3Cg%20id%3D%27Frame%202116748449%27%3E%3Cpath%20id%3D%27Subtract%27%20d%3D%27M170%20101.783C170%20105.144%20168.49%20108.327%20165.886%20110.453L134.963%20135.702C132.964%20137.334%20130.463%20138.225%20127.883%20138.225H10.4938C4.69824%20138.225%200%20133.527%200%20127.732V39.2289C0%2035.8597%201.51758%2032.6698%204.13162%2030.5442L38.5402%202.56547C40.536%200.942662%2043.0298%200.0567377%2045.602%200.0567377H159.506C165.302%200.0567377%20170%204.75498%20170%2010.5506V101.783Z%27%20fill%3D%27black%27%20style%3D%27fill%3Ablack%3Bfill-opacity%3A1%3B%27/%3E%3Cpath%20id%3D%27Subtract_2%27%20d%3D%27M149.011%2094.4632C149.011%2096.1471%20148.253%2097.7415%20146.946%2098.8043L125.893%20115.936C124.895%20116.748%20123.648%20117.191%20122.361%20117.191H24.6479C22.716%20117.191%2021.15%20115.625%2021.15%20113.693V46.1166C21.15%2044.4267%2021.9135%2042.8274%2023.2274%2041.7648L47.367%2022.2437C48.3638%2021.4376%2049.607%2020.9982%2050.8888%2020.9988L145.514%2021.0427C147.446%2021.0436%20149.011%2022.6094%20149.011%2024.5406V94.4632Z%27%20fill%3D%27white%27%20style%3D%27fill%3Awhite%3Bfill-opacity%3A1%3B%27/%3E%3Cpath%20id%3D%27Rectangle%20111142564%27%20d%3D%27M42.111%2080.8025C42.111%2077.7115%2044.6167%2075.2057%2047.7077%2075.2057H60.9999C64.0908%2075.2057%2066.5966%2077.7115%2066.5966%2080.8025V121.029H42.111V80.8025Z%27%20fill%3D%27black%27%20style%3D%27fill%3Ablack%3Bfill-opacity%3A1%3B%27/%3E%3Cpath%20id%3D%27Rectangle%20111142567%27%20d%3D%27M79.1894%2080.8025C79.1894%2077.7115%2081.6952%2075.2057%2084.7861%2075.2057H98.0783C101.169%2075.2057%20103.675%2077.7115%20103.675%2080.8025V121.029H79.1894V80.8025Z%27%20fill%3D%27black%27%20style%3D%27fill%3Ablack%3Bfill-opacity%3A1%3B%27/%3E%3C/g%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 14px 11px;
-  background-color: #8FD1FF;
-  border-radius: 4px;
-}
-
-.minimax-ball-text {
-  font-size: 12px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.minimax-close-icon {
-  margin-left: 8px;
-  font-size: 16px;
-  width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
-}
-
-.minimax-close-icon:hover {
-  opacity: 1;
-}
-</style>
-<div id="minimax-floating-ball">
-  <div class="minimax-ball-content">
-    <div class="minimax-logo-wave"></div>
-    <span class="minimax-ball-text">Created by MiniMax Agent</span>
-  </div>
-  <div class="minimax-close-icon">×</div>
-</div>
-<script>
-// Initialize floating ball functionality
-function initFloatingBall() {
-  const ball = document.getElementById('minimax-floating-ball');
-  if (!ball) return;
-
-  // Initial animation
-  ball.style.opacity = '0';
-  ball.style.transform = 'translateY(20px)';
-
-  setTimeout(() => {
-    ball.style.opacity = '1';
-    ball.style.transform = 'translateY(0)';
-  }, 500);
-
-  // Handle logo click
-  const ballContent = ball.querySelector('.minimax-ball-content');
-  ballContent.addEventListener('click', function (e) {
-    e.stopPropagation();
-    window.open('https://agent.minimax.io/', '_blank');
-    ball.style.transform = 'scale(0.95)';
-    setTimeout(() => {
-      ball.style.transform = 'scale(1)';
-    }, 100);
-  });
-
-  // Handle close button click
-  const closeIcon = ball.querySelector('.minimax-close-icon');
-  closeIcon.addEventListener('click', function (e) {
-    e.stopPropagation();
-    ball.style.opacity = '0';
-    ball.style.transform = 'translateY(20px)';
-
-    setTimeout(() => {
-      ball.style.display = 'none';
-    }, 300);
-  });
-}
-
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', initFloatingBall); 
-</script>
 </body>
 </html>
